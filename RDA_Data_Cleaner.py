@@ -5,13 +5,11 @@ import uuid
 #opens wget data file and creates csv output files
 users = open('UsersRDA.txt', 'r', encoding='utf-8')
 users_csv = open('users_RDA_csv.csv', 'w', encoding='utf-8')
-groups_id = open('groupsID_csv.csv', 'w', encoding='utf-8')
 groups_users = open('groupsID_usersID_csv.csv', 'w', encoding='utf-8')
 
 #erases whatever was in the created files so if the code was ran more than once
 #it would get rid of the old data
 users_csv.truncate(0)
-groups_id.truncate(0)
 groups_users.truncate(0)
 
 data = users.read()
@@ -61,7 +59,7 @@ for x in data: #iterates through data and cleans using regex
     x = re.sub('(Bulgaria)\|country\|', r'\1,BGR', x)
     x = re.sub('(Bahrain)\|country\|', r'\1,BHR', x)
     x = re.sub('(Bosnia Herzegovina)\|country\|', r'\1,BIH', x)
-    x = re.sub('(Belize)\|country\|', r'\1.BLZ', x)
+    x = re.sub('(Belize)\|country\|', r'\1,BLZ', x)
     x = re.sub('(Bolivia)\|country\|', r'\1,BOL', x)
     x = re.sub('(Brazil)\|country\|', r'\1,BRA', x)
     x = re.sub('(Barbados)\|country\|', r'\1,BRB', x)
@@ -71,7 +69,7 @@ for x in data: #iterates through data and cleans using regex
     x = re.sub('(Switzerland)\|country\|', r'\1,CHE', x)
     x = re.sub('(Chile)\|country\|', r'\1,CHL', x)
     x = re.sub('(China)\|country\|', r'\1,CHN', x)
-    x = re.sub('(Ivory Coast)\|country\|', 'r\1,CIV', x)
+    x = re.sub('(Ivory Coast)\|country\|', r'\1,CIV', x)
     x = re.sub('(Cameroon)\|country\|', r'\1,CMR', x)
     x = re.sub('(Congo \{Democratic Rep\})\|country\|', r'\1,COD', x)
     x = re.sub('(Colombia)\|country\|', r'\1,COL', x)
@@ -125,6 +123,7 @@ for x in data: #iterates through data and cleans using regex
     x = re.sub('(Korea South)\|country\|', r'\1,KOR', x)
     x = re.sub('(Kosovo)\|country\|', r'\1,RKS', x)
     x = re.sub('(Kuwait)\|country\|', r'\1,KWT', x)
+    x = re.sub('(St Lucia)\|country\|', r'\1,LCA', x)
     x = re.sub('(Lebanon)\|country\|', r'\1,LBN', x)
     x = re.sub('(Lithuania)\|country\|', r'\1,LTU', x)
     x = re.sub('(Sri Lanka)\|country\|', r'\1,LKA', x)
@@ -190,6 +189,7 @@ for x in data: #iterates through data and cleans using regex
     x = re.sub('(Uruguay)\|country\|', r'\1,URY', x)
     x = re.sub('(United States)\|country\|', r'\1,USA', x)
     x = re.sub('(Uzbekistan)\|country\|', r'\1,UZB', x)
+    x = re.sub('(Vatican City)\|country\|', r'\1,VAT', x)
     x = re.sub('(Venezuela)\|country\|', r'\1,VEN', x)
     x = re.sub('(Vietnam)\|country\|', r'\1,VNM', x)
     x = re.sub('(Vanuatu)\|country\|', r'\1,VUT', x)
@@ -216,23 +216,19 @@ group_list = re.split('\.', group_list)
 group_list = list(dict.fromkeys(group_list))
 group_list = sorted(group_list)
 
-groups_id.write('Group Name,Group ID\n')
-groups_users.write('Group ID,User IDs\n')
+groups_users.write('Group Name,Group ID,User IDs\n')
 #loops through each group name and if the user is in the groups
 #writes the user id to the group_users file
 for i in group_list:
     rand_id = str(uuid.uuid4())
-    groups_id.write(i+',')
-    groups_users.write(rand_id+',')
-    groups_id.write(rand_id+',')
     i = re.sub('\(', '\(', i)
     i = re.sub('\)', '\)', i)
     for j in users_list:
         if re.search(i, j):
-            groups_users.write(j[:36]+';')
-    groups_id.write('\n')
-    groups_users.write('\n')
+            groups_users.write(i+',')
+            groups_users.write(rand_id+',')
+            groups_users.write(j[:36]+',')
+            groups_users.write('\n')
 
-groups_id.close()
 groups_users.close()
 users.close()
